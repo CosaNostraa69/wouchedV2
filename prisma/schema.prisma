@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  profile       Profile?
+  jobs          Job[]     // Pour les employeurs
+  applications  Application[]
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  bio           String?
+  experience    String?
+  skills        String[]
+  steamProfile  String?
+  twitchProfile String?
+  discordProfile String?
+}
+
+model Company {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  logo          String?
+  website       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  jobs          Job[]
+}
+
+model Job {
+  id            String    @id @default(cuid())
+  title         String
+  description   String
+  requirements  String[]
+  salary        String?
+  location      String?
+  type          JobType
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  applications  Application[]
+  categories    Category[]
+}
+
+model Application {
+  id            String    @id @default(cuid())
+  coverLetter   String?
+  status        ApplicationStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  jobId         String
+  job           Job       @relation(fields: [jobId], references: [id])
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  jobs          Job[]
+}
+
+enum Role {
+  USER
+  EMPLOYER
+  ADMIN
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
