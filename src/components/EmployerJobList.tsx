@@ -41,39 +41,40 @@ const EmployerJobList = () => {
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error}</div>
 
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this job?')) {
+      try {
+        const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' })
+        if (res.ok) {
+          setJobs(jobs.filter(job => job.id !== id))
+        } else {
+          throw new Error('Failed to delete job')
+        }
+      } catch (error) {
+        console.error('Job deletion error:', error)
+      }
+    }
+  }
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Your Job Listings</h2>
-      {jobs.length === 0 ? (
-        <p>You haven't posted any jobs yet.</p>
-      ) : (
-        <ul className="space-y-4">
-          {jobs.map((job) => (
-            <li key={job.id} className="bg-white shadow rounded-lg p-4">
-              <h3 className="text-xl font-semibold">{job.title}</h3>
-              <p className="text-gray-600">{job.description.substring(0, 100)}...</p>
-              <div className="mt-2">
-                <span className="text-sm text-gray-500 mr-2">{job.location}</span>
-                <span className="text-sm text-gray-500 mr-2">{job.type}</span>
-                <span className="text-sm text-gray-500">{job.salary}</span>
-              </div>
-              <div className="mt-2">
-                {job.categories.map((category) => (
-                  <span key={category.name} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                    {category.name}
-                  </span>
-                ))}
-              </div>
-              <Link href={`/employer/jobs/${job.id}/edit`} className="text-blue-500 hover:underline mr-2">
+      <ul className="space-y-4">
+        {jobs.map((job) => (
+          <li key={job.id} className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-xl font-semibold">{job.title}</h3>
+            <p className="text-gray-600">{job.description.substring(0, 100)}...</p>
+            <div className="mt-4">
+              <Link href={`/employer/jobs/${job.id}/edit`} className="text-blue-500 hover:underline mr-4">
                 Edit
               </Link>
-              <button onClick={() => {/* Add delete functionality */}} className="text-red-500 hover:underline">
+              <button onClick={() => handleDelete(job.id)} className="text-red-500 hover:underline">
                 Delete
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
