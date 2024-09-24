@@ -22,7 +22,7 @@ const Header = () => {
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center space-x-2">
           <Image src="/images/wouched.png" alt="Wouched Logo" width={40} height={40} className="rounded-full" />
-          <span className="text-xl font-bold">Wouched</span>
+          
         </Link>
         <nav className="flex items-center space-x-4">
           <Link href="/jobs" className="hover:text-gray-300 transition-colors">Jobs</Link>
