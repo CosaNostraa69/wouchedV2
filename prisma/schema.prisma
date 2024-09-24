@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-   id        String   @id @default(cuid())
-  name      String?
-  email     String   @unique
-  password  String
-  image     String?
-  role      String   @default("USER")
-  companyId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  profile       Profile?
-  jobs          Job[]     // Pour les employeurs
-  applications  Application[]
+  id           String        @id @default(cuid())
+  name         String?
+  email        String        @unique
+  password     String
+  role         String        @default("USER")
+  company      Company?      @relation(fields: [companyId], references: [id])
+  companyId    String?
+  image        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  profile      Profile?
+  jobs         Job[]
+  applications Application[]
 }
 
 model Profile {
@@ -46,6 +47,7 @@ model Company {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   jobs          Job[]
+  users         User[]
 }
 
 model Job {

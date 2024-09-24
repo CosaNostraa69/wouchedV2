@@ -2,12 +2,13 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import EmployerJobList from '@/components/EmployerJobList'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export default async function EmployerDashboardPage() {
   const session = await getServerSession(authOptions)
 
   if (!session || session.user.role !== 'EMPLOYER') {
-    return <div>Access Denied</div>
+    redirect('/auth/signin')
   }
 
   return (

@@ -13,6 +13,16 @@ export async function POST(req: Request) {
   try {
     const { title, description, requirements, salary, location, type, categories } = await req.json()
 
+    // Récupérer l'utilisateur avec sa relation Company
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      include: { company: true },
+    })
+
+    if (!user || !user.company) {
+      return NextResponse.json({ error: 'User or company not found' }, { status: 404 })
+    }
+
     const job = await prisma.job.create({
       data: {
         title,
@@ -21,8 +31,8 @@ export async function POST(req: Request) {
         salary,
         location,
         type,
-        company: { connect: { id: session.user.companyId } },
-        user: { connect: { id: session.user.id } },
+        user: { connect: { id: user.id } },
+        company: { connect: { id: user.company.id } },
         categories: {
           connectOrCreate: categories.map((category: string) => ({
             where: { name: category },
@@ -34,6 +44,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ job })
   } catch (error: any) {
+    console.error('Error creating job:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
