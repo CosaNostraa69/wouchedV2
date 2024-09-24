@@ -2,19 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface Job {
   id: string
   title: string
   description: string
-  salary: string
-  location: string
-  type: string
-  categories: { name: string }[]
   company: { name: string }
+  type: string
+  location: string
+  salary: string
+  categories: { name: string }[]
 }
 
-const PublicJobList = () => {
+export default function PublicJobList() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -42,38 +45,38 @@ const PublicJobList = () => {
   if (error) return <div>Error: {error}</div>
 
   return (
-    <div>
+    <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Latest Job Listings</h2>
       {jobs.length === 0 ? (
         <p>No job listings available at the moment.</p>
       ) : (
-        <ul className="space-y-4">
-          {jobs.map((job) => (
-            <li key={job.id} className="bg-white shadow rounded-lg p-4">
-              <h3 className="text-xl font-semibold">{job.title}</h3>
-              <p className="text-gray-600">{job.company.name}</p>
-              <p className="text-gray-600">{job.description.substring(0, 100)}...</p>
-              <div className="mt-2">
-                <span className="text-sm text-gray-500 mr-2">{job.location}</span>
-                <span className="text-sm text-gray-500 mr-2">{job.type}</span>
-                <span className="text-sm text-gray-500">{job.salary}</span>
+        jobs.map((job) => (
+          <Card key={job.id}>
+            <CardHeader>
+              <CardTitle>{job.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-2">{job.company.name}</p>
+              <p className="text-gray-600 mb-2">{job.description.substring(0, 150)}...</p>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <Badge variant="secondary">{job.type}</Badge>
+                <Badge variant="outline">{job.location}</Badge>
+                {job.salary && <Badge variant="outline">{job.salary}</Badge>}
               </div>
-              <div className="mt-2">
+              <div className="flex flex-wrap gap-1 mt-2">
                 {job.categories.map((category) => (
-                  <span key={category.name} className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                    {category.name}
-                  </span>
+                  <Badge key={category.name} variant="secondary">{category.name}</Badge>
                 ))}
               </div>
-              <Link href={`/jobs/${job.id}`} className="text-blue-500 hover:underline">
-                View Details
+            </CardContent>
+            <CardFooter>
+              <Link href={`/jobs/${job.id}`} passHref>
+                <Button>View Details</Button>
               </Link>
-            </li>
-          ))}
-        </ul>
+            </CardFooter>
+          </Card>
+        ))
       )}
     </div>
   )
 }
-
-export default PublicJobList

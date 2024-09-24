@@ -3,6 +3,8 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import EmployerJobList from '@/components/EmployerJobList'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
 export default async function EmployerDashboardPage() {
   const session = await getServerSession(authOptions)
@@ -12,12 +14,21 @@ export default async function EmployerDashboardPage() {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Employer Dashboard</h1>
-      <Link href="/employer/jobs/create" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-4 inline-block">
-        Post New Job
-      </Link>
-      <EmployerJobList />
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Employer Dashboard</CardTitle>
+          <CardDescription>Manage your job listings and post new opportunities.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6">
+            <Link href="/employer/jobs/create" passHref>
+              <Button>Post New Job</Button>
+            </Link>
+          </div>
+          <EmployerJobList />
+        </CardContent>
+      </Card>
     </div>
   )
 }

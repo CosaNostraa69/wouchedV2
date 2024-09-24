@@ -1,45 +1,35 @@
 // src/components/EmployerJobList.tsx
+
 'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface Job {
   id: string
   title: string
   description: string
-  salary: string
-  location: string
   type: string
-  categories: { name: string }[]
+  location: string
+  createdAt: string
 }
 
-const EmployerJobList = () => {
+export default function EmployerJobList() {
   const [jobs, setJobs] = useState<Job[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const router = useRouter()
 
   useEffect(() => {
     const fetchJobs = async () => {
-      try {
-        const response = await fetch('/api/employer/jobs')
-        if (!response.ok) {
-          throw new Error('Failed to fetch jobs')
-        }
-        const data = await response.json()
-        setJobs(data.jobs)
-      } catch (err) {
-        setError('An error occurred while fetching jobs')
-      } finally {
-        setLoading(false)
-      }
+      const res = await fetch('/api/employer/jobs')
+      const data = await res.json()
+      setJobs(data.jobs)
     }
-
     fetchJobs()
   }, [])
-
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error}</div>
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this job?')) {
@@ -57,26 +47,33 @@ const EmployerJobList = () => {
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <h2 className="text-2xl font-bold mb-4">Your Job Listings</h2>
-      <ul className="space-y-4">
-        {jobs.map((job) => (
-          <li key={job.id} className="bg-white shadow rounded-lg p-4">
-            <h3 className="text-xl font-semibold">{job.title}</h3>
-            <p className="text-gray-600">{job.description.substring(0, 100)}...</p>
-            <div className="mt-4">
-              <Link href={`/employer/jobs/${job.id}/edit`} className="text-blue-500 hover:underline mr-4">
-                Edit
+      {jobs.length === 0 ? (
+        <p>You haven't posted any jobs yet.</p>
+      ) : (
+        jobs.map((job) => (
+          <Card key={job.id}>
+            <CardHeader>
+              <CardTitle>{job.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-2">{job.description.substring(0, 150)}...</p>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <Badge variant="secondary">{job.type}</Badge>
+                <Badge variant="outline">{job.location}</Badge>
+              </div>
+              <p className="text-sm text-gray-500">Posted on: {new Date(job.createdAt).toLocaleDateString()}</p>
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <Link href={`/employer/jobs/${job.id}/edit`} passHref>
+                <Button variant="outline">Edit</Button>
               </Link>
-              <button onClick={() => handleDelete(job.id)} className="text-red-500 hover:underline">
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+              <Button variant="destructive" onClick={() => handleDelete(job.id)}>Delete</Button>
+            </CardFooter>
+          </Card>
+        ))
+      )}
     </div>
   )
 }
-
-export default EmployerJobList

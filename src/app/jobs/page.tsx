@@ -1,10 +1,18 @@
 import PublicJobList from '@/components/jobs/PublicJobList'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
-export default function PublicJobsPage() {
+export default function JobsPage() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Esport Job Listings</h1>
-      <PublicJobList />
+    <div className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Job Listings</CardTitle>
+          <CardDescription>Explore the latest job opportunities in esports and gaming.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PublicJobList />
+        </CardContent>
+      </Card>
     </div>
   )
 }
