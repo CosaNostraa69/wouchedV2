@@ -2,11 +2,22 @@
 
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 interface Job {
   id: string
@@ -20,24 +31,25 @@ interface Job {
 }
 
 interface EmployerJobListProps {
-  jobs: Job[]
+  initialJobs: Job[]
   isPublicView?: boolean
 }
 
-export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs = [], isPublicView = false }) => {
+export const EmployerJobList: React.FC<EmployerJobListProps> = ({ initialJobs = [], isPublicView = false }) => {
+  const [jobs, setJobs] = useState<Job[]>(initialJobs)
+
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this job?')) {
-      try {
-        const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' })
-        if (res.ok) {
-          // You might want to update the jobs list here or trigger a re-fetch
-          console.log('Job deleted successfully')
-        } else {
-          throw new Error('Failed to delete job')
-        }
-      } catch (error) {
-        console.error('Job deletion error:', error)
+    try {
+      const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        // Remove the deleted job from the local state
+        setJobs(jobs.filter(job => job.id !== id))
+        console.log('Job deleted successfully')
+      } else {
+        throw new Error('Failed to delete job')
       }
+    } catch (error) {
+      console.error('Job deletion error:', error)
     }
   }
 
@@ -72,7 +84,25 @@ export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs = [], isP
                   <Link href={`/employer/jobs/${job.id}/edit`} passHref>
                     <Button variant="outline">Edit</Button>
                   </Link>
-                  <Button variant="destructive" onClick={() => handleDelete(job.id)}>Delete</Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive">Delete</Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently delete your job listing.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(job.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </>
               )}
             </CardFooter>

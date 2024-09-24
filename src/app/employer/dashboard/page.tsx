@@ -37,7 +37,7 @@ export default async function EmployerDashboardPage() {
               <Button>Post New Job</Button>
             </Link>
           </div>
-          <EmployerJobList jobs={jobs} isPublicView={false} />
+          <EmployerJobList initialJobs={jobs} isPublicView={false} />
         </CardContent>
       </Card>
     </div>
