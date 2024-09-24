@@ -24,6 +24,8 @@ model User {
   profile      Profile?
   jobs         Job[]
   applications Application[]
+  reviews Review[]
+  
 }
 
 model Profile {
@@ -42,8 +44,10 @@ model Company {
   id            String    @id @default(cuid())
   name          String
   description   String?
-  logo          String?
   website       String?
+  location      String?
+  size          String?
+  logo          String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   jobs          Job[]
@@ -84,6 +88,18 @@ model Category {
   id            String    @id @default(cuid())
   name          String    @unique
   jobs          Job[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int
+  title      String
+  content    String
+  author     String
+  date       DateTime
+  createdAt     DateTime  @default(now())
+  employerId String
+  employer   User     @relation(fields: [employerId], references: [id])
 }
 
 enum Role {

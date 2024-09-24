@@ -2,9 +2,8 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,29 +13,25 @@ interface Job {
   title: string
   description: string
   type: string
+  requirements: string[]
+  salary: string
   location: string
   createdAt: string
 }
 
-export default function EmployerJobList() {
-  const [jobs, setJobs] = useState<Job[]>([])
-  const router = useRouter()
+interface EmployerJobListProps {
+  jobs: Job[]
+  isPublicView?: boolean
+}
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      const res = await fetch('/api/employer/jobs')
-      const data = await res.json()
-      setJobs(data.jobs)
-    }
-    fetchJobs()
-  }, [])
-
+export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs, isPublicView = false }) => {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this job?')) {
       try {
         const res = await fetch(`/api/jobs/${id}`, { method: 'DELETE' })
         if (res.ok) {
-          setJobs(jobs.filter(job => job.id !== id))
+          // You might want to update the jobs list here or trigger a re-fetch
+          console.log('Job deleted successfully')
         } else {
           throw new Error('Failed to delete job')
         }
@@ -48,9 +43,11 @@ export default function EmployerJobList() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold mb-4">Your Job Listings</h2>
+      <h2 className="text-2xl font-bold mb-4">
+        {isPublicView ? "Current Job Listings" : "Your Job Listings"}
+      </h2>
       {jobs.length === 0 ? (
-        <p>You haven't posted any jobs yet.</p>
+        <p>{isPublicView ? "No jobs currently listed." : "You haven't posted any jobs yet."}</p>
       ) : (
         jobs.map((job) => (
           <Card key={job.id}>
@@ -62,14 +59,23 @@ export default function EmployerJobList() {
               <div className="flex flex-wrap gap-2 mb-2">
                 <Badge variant="secondary">{job.type}</Badge>
                 <Badge variant="outline">{job.location}</Badge>
+                {job.salary && <Badge variant="outline">{job.salary}</Badge>}
               </div>
               <p className="text-sm text-gray-500">Posted on: {new Date(job.createdAt).toLocaleDateString()}</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Link href={`/employer/jobs/${job.id}/edit`} passHref>
-                <Button variant="outline">Edit</Button>
-              </Link>
-              <Button variant="destructive" onClick={() => handleDelete(job.id)}>Delete</Button>
+              {isPublicView ? (
+                <Link href={`/jobs/${job.id}`} passHref>
+                  <Button variant="outline">View Details</Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href={`/employer/jobs/${job.id}/edit`} passHref>
+                    <Button variant="outline">Edit</Button>
+                  </Link>
+                  <Button variant="destructive" onClick={() => handleDelete(job.id)}>Delete</Button>
+                </>
+              )}
             </CardFooter>
           </Card>
         ))

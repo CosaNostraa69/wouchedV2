@@ -10,7 +10,10 @@ interface Job {
   id: string
   title: string
   description: string
-  company: { name: string }
+  company: { 
+    id: string
+    name: string 
+  }
   type: string
   location: string
   salary: string

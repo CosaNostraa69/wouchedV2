@@ -53,20 +53,18 @@ export async function GET(req: Request) {
   try {
     const jobs = await prisma.job.findMany({
       include: {
-        categories: true,
         company: {
           select: {
-            name: true
-          }
-        }
+            id: true,
+            name: true,
+          },
+        },
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
     })
 
-    return NextResponse.json({ jobs })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(jobs)
+  } catch (error) {
+    console.error('Error fetching jobs:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

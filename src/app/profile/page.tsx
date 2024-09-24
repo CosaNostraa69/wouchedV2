@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -38,7 +39,7 @@ export default function EmployerProfilePage() {
     } else if (status === 'authenticated') {
       fetchProfileData()
     }
-  }, [status, session])
+  }, [status, session, router])
 
   const fetchProfileData = async () => {
     try {
@@ -152,7 +153,7 @@ export default function EmployerProfilePage() {
                     <AvatarImage src={profileData.avatarUrl} />
                     <AvatarFallback>{profileData.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <Button onClick={() => fileInputRef.current?.click()}>
+                  <Button type="button" onClick={() => fileInputRef.current?.click()}>
                     Change Avatar
                   </Button>
                   <input
@@ -208,8 +209,11 @@ export default function EmployerProfilePage() {
                   />
                 </div>
               </TabsContent>
-              <CardFooter className="mt-4">
+              <CardFooter className="mt-4 flex justify-between">
                 <Button type="submit">Save Changes</Button>
+                <Link href={`/users/${session?.user?.id}`} passHref>
+                  <Button variant="outline">View Public Profile</Button>
+                </Link>
               </CardFooter>
             </form>
           </Tabs>
