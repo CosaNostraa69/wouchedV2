@@ -4,12 +4,11 @@ import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
 import prisma from '@/lib/prisma'
-import { useSession } from 'next-auth/react'
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
 
-  if (!session || session.user.role !== 'EMPLOYER') {
+  if (!session) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -28,65 +27,77 @@ export async function GET() {
       email: user.email,
       avatarUrl: user.image,
       company: {
-        name: user.company?.name,
-        description: user.company?.description,
-        website: user.company?.website,
+        name: user.company?.name || '',
+        description: user.company?.description || '',
+        website: user.company?.website || '',
+        foundedYear: user.company?.foundedYear || new Date().getFullYear(),
+        size: user.company?.size || '',
+        location: user.company?.location || '',
       },
     })
   } catch (error) {
     console.error('Error fetching profile:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
 export async function PUT(req: Request) {
-  console.log('PUT /api/profile - Start')
   const session = await getServerSession(authOptions)
 
   if (!session) {
-    console.log('PUT /api/profile - Unauthorized: No session')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
     const { name, email, company } = await req.json()
-    console.log('Received data:', { name, email, company })
 
-    let updatedUser
-
-    if (session.user.role === 'EMPLOYER') {
-      updatedUser = await prisma.user.update({
-        where: { id: session.user.id },
-        data: {
-          name,
-          email,
-          company: {
+    const updatedUser = await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        name,
+        email,
+        company: {
+          upsert: {
+            create: {
+              name: company.name,
+              description: company.description,
+              website: company.website,
+              foundedYear: company.foundedYear,
+              size: company.size,
+              location: company.location,
+            },
             update: {
               name: company.name,
               description: company.description,
               website: company.website,
+              foundedYear: company.foundedYear,
+              size: company.size,
+              location: company.location,
             },
           },
         },
-        include: { company: true },
-      })
-    } else {
-      updatedUser = await prisma.user.update({
-        where: { id: session.user.id },
-        data: { name, email },
-      })
-    }
+      },
+      include: { company: true },
+    })
 
-    console.log('Updated user:', updatedUser)
-
-    return NextResponse.json({ message: 'Profile updated successfully', user: updatedUser })
-  } catch (error: unknown) {
+    return NextResponse.json({
+      message: 'Profile updated successfully',
+      user: {
+        name: updatedUser.name,
+        email: updatedUser.email,
+        avatarUrl: updatedUser.image,
+        company: {
+          name: updatedUser.company?.name || '',
+          description: updatedUser.company?.description || '',
+          website: updatedUser.company?.website || '',
+          foundedYear: updatedUser.company?.foundedYear || new Date().getFullYear(),
+          size: updatedUser.company?.size || '',
+          location: updatedUser.company?.location || '',
+        },
+      },
+    })
+  } catch (error) {
     console.error('Error updating profile:', error)
-    
-    if (error instanceof Error) {
-      return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
-    } else {
-      return NextResponse.json({ error: 'Internal server error', details: 'An unknown error occurred' }, { status: 500 })
-    }
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

@@ -24,7 +24,7 @@ interface EmployerJobListProps {
   isPublicView?: boolean
 }
 
-export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs, isPublicView = false }) => {
+export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs = [], isPublicView = false }) => {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this job?')) {
       try {
@@ -59,7 +59,6 @@ export const EmployerJobList: React.FC<EmployerJobListProps> = ({ jobs, isPublic
               <div className="flex flex-wrap gap-2 mb-2">
                 <Badge variant="secondary">{job.type}</Badge>
                 <Badge variant="outline">{job.location}</Badge>
-                {job.salary && <Badge variant="outline">{job.salary}</Badge>}
               </div>
               <p className="text-sm text-gray-500">Posted on: {new Date(job.createdAt).toLocaleDateString()}</p>
             </CardContent>

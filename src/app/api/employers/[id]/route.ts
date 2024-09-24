@@ -1,4 +1,5 @@
 // src/app/api/employers/[id]/route.ts
+
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
@@ -6,40 +7,37 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  console.log('API route hit, employer ID:', params.id)
   try {
-    const employer = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: params.id },
       include: {
         company: true,
       },
     })
 
-    console.log('Employer found:', employer)
-
-    if (!employer) {
-      console.log('Employer not found')
-      return NextResponse.json({ error: 'Employer not found' }, { status: 404 })
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Transformez les données pour correspondre à l'interface EmployerProfile
-    const profileData = {
-      id: employer.id,
-      name: employer.name || '',
-      avatarUrl: employer.image || '',
-      rating: 0, // Vous devrez implémenter le calcul de la note moyenne
+    const profile = {
+      id: user.id,
+      name: user.name,
+      avatarUrl: user.image,
+      rating: 0, // Vous devrez implémenter le calcul de la note
       reviewCount: 0, // Vous devrez implémenter le comptage des avis
-      description: employer.company?.description || '',
-      foundedYear: employer.company?.createdAt?.getFullYear() || new Date().getFullYear(),
-      size: employer.company?.size || 'N/A',
-      location: employer.company?.location || 'N/A',
-      website: employer.company?.website || 'N/A',
+      company: {
+        name: user.company?.name || 'N/A',
+        description: user.company?.description || 'N/A',
+        website: user.company?.website || 'N/A',
+        foundedYear: user.company?.createdAt?.getFullYear() || 'N/A',
+        size: user.company?.size || 'N/A',
+        location: user.company?.location || 'N/A',
+      },
     }
 
-    console.log('Profile data to be returned:', profileData)
-    return NextResponse.json(profileData)
+    return NextResponse.json(profile)
   } catch (error) {
-    console.error('Error fetching employer:', error)
+    console.error('Error fetching employer profile:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }

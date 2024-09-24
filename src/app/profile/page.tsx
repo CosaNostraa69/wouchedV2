@@ -21,6 +21,9 @@ interface ProfileData {
     name: string;
     description: string;
     website: string;
+    foundedYear: number;
+    size: string;
+    location: string;
   };
 }
 
@@ -135,19 +138,19 @@ export default function EmployerProfilePage() {
 
   return (
     <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Employer Profile</CardTitle>
-          <CardDescription>Manage your personal and company information</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="personal">
-            <TabsList>
-              <TabsTrigger value="personal">Personal Information</TabsTrigger>
-              <TabsTrigger value="company">Company Information</TabsTrigger>
-            </TabsList>
-            <form onSubmit={handleSubmit}>
-              <TabsContent value="personal" className="space-y-4">
+    <Card>
+      <CardHeader>
+        <CardTitle>Employer Profile</CardTitle>
+        <CardDescription>Manage your personal and company information</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Tabs defaultValue="personal">
+          <TabsList>
+            <TabsTrigger value="personal">Personal Information</TabsTrigger>
+            <TabsTrigger value="company">Company Information</TabsTrigger>
+          </TabsList>
+          <form onSubmit={handleSubmit}>
+            <TabsContent value="personal" className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-20 w-20">
                     <AvatarImage src={profileData.avatarUrl} />
@@ -206,6 +209,31 @@ export default function EmployerProfilePage() {
                     type="url"
                     value={profileData.company.website}
                     onChange={(e) => setProfileData({...profileData, company: {...profileData.company, website: e.target.value}})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="foundedYear">Founded Year</Label>
+                  <Input
+                    id="foundedYear"
+                    type="number"
+                    value={profileData.company.foundedYear}
+                    onChange={(e) => setProfileData({...profileData, company: {...profileData.company, foundedYear: parseInt(e.target.value)}})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companySize">Company Size</Label>
+                  <Input
+                    id="companySize"
+                    value={profileData.company.size}
+                    onChange={(e) => setProfileData({...profileData, company: {...profileData.company, size: e.target.value}})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyLocation">Company Location</Label>
+                  <Input
+                    id="companyLocation"
+                    value={profileData.company.location}
+                    onChange={(e) => setProfileData({...profileData, company: {...profileData.company, location: e.target.value}})}
                   />
                 </div>
               </TabsContent>

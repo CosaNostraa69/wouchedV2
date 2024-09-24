@@ -8,6 +8,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+
+const predefinedCategories = [
+  "Game Development",
+  "Game Design",
+  "3D Modeling",
+  "Animation",
+  "Programming",
+  "Art & Illustration",
+  "Sound Design",
+  "Quality Assurance",
+  "Project Management",
+  "Marketing",
+  "Community Management",
+  "Esports",
+  "Streaming",
+  "Virtual Reality",
+  "Augmented Reality",
+]
 
 export default function JobPostForm() {
   const [title, setTitle] = useState('')
@@ -16,8 +35,10 @@ export default function JobPostForm() {
   const [salary, setSalary] = useState('')
   const [location, setLocation] = useState('')
   const [type, setType] = useState('FULL_TIME')
-  const [categories, setCategories] = useState('')
+  const [categories, setCategories] = useState<string[]>([])
   const router = useRouter()
+
+ 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,7 +53,7 @@ export default function JobPostForm() {
           salary,
           location,
           type,
-          categories: categories.split(',').map(cat => cat.trim()),
+          categories,
         }),
       })
       if (res.ok) {
@@ -45,6 +66,13 @@ export default function JobPostForm() {
     }
   }
 
+  function handleCategoryChange(value: string): void {
+    setCategories(prev => 
+      prev.includes(value)
+        ? prev.filter(c => c !== value)
+        : [...prev, value]
+    )
+  }
   return (
     <Card>
       <CardHeader>
@@ -115,13 +143,30 @@ export default function JobPostForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="categories">Categories</Label>
-            <Input
-              id="categories"
-              value={categories}
-              onChange={(e: { target: { value: SetStateAction<string> } }) => setCategories(e.target.value)}
-              placeholder="Separate with commas"
-              required
-            />
+            <Select onValueChange={handleCategoryChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select categories" />
+              </SelectTrigger>
+              <SelectContent>
+                {predefinedCategories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {categories.map(category => (
+                <Badge 
+                  key={category} 
+                  variant="secondary"
+                  onClick={() => handleCategoryChange(category)}
+                >
+                  {category}
+                  <span className="ml-1 cursor-pointer">×</span>
+                </Badge>
+              ))}
+            </div>
           </div>
         </CardContent>
         <CardFooter>

@@ -13,8 +13,12 @@ export async function GET(
     })
     console.log('Reviews found:', reviews)
     return NextResponse.json(reviews)
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching reviews:', error)
-    return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 })
+    if (error instanceof Error) {
+      return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 })
+    } else {
+      return NextResponse.json({ error: 'Internal Server Error', details: 'An unknown error occurred' }, { status: 500 })
+    }
   }
 }

@@ -48,6 +48,7 @@ model Company {
   location      String?
   size          String?
   logo          String?
+  foundedYear   Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   jobs          Job[]

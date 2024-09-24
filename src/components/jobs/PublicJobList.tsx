@@ -17,7 +17,7 @@ interface Job {
   type: string
   location: string
   salary: string
-  categories: { name: string }[]
+  categories?: { name: string }[]  // Make categories optional
 }
 
 export default function PublicJobList() {
@@ -33,8 +33,17 @@ export default function PublicJobList() {
           throw new Error('Failed to fetch jobs')
         }
         const data = await response.json()
-        setJobs(data.jobs)
+        console.log('API response:', data)
+        if (Array.isArray(data)) {
+          setJobs(data)
+        } else if (data.jobs && Array.isArray(data.jobs)) {
+          setJobs(data.jobs)
+        } else {
+          console.error('Unexpected data structure:', data)
+          setError('Unexpected data structure received from API')
+        }
       } catch (err) {
+        console.error('Error fetching jobs:', err)
         setError('An error occurred while fetching jobs')
       } finally {
         setLoading(false)
@@ -59,18 +68,20 @@ export default function PublicJobList() {
               <CardTitle>{job.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-2">{job.company.name}</p>
-              <p className="text-gray-600 mb-2">{job.description.substring(0, 150)}...</p>
+              <p className="text-gray-600 mb-2">{job.company?.name || 'Company name not available'}</p>
+              <p className="text-gray-600 mb-2">{job.description ? job.description.substring(0, 150) + '...' : 'No description available'}</p>
               <div className="flex flex-wrap gap-2 mb-2">
-                <Badge variant="secondary">{job.type}</Badge>
-                <Badge variant="outline">{job.location}</Badge>
+                {job.type && <Badge variant="secondary">{job.type}</Badge>}
+                {job.location && <Badge variant="outline">{job.location}</Badge>}
                 {job.salary && <Badge variant="outline">{job.salary}</Badge>}
               </div>
-              <div className="flex flex-wrap gap-1 mt-2">
-                {job.categories.map((category) => (
-                  <Badge key={category.name} variant="secondary">{category.name}</Badge>
-                ))}
-              </div>
+              {job.categories && job.categories.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {job.categories.map((category) => (
+                    <Badge key={category.name} variant="secondary">{category.name}</Badge>
+                  ))}
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               <Link href={`/jobs/${job.id}`} passHref>
