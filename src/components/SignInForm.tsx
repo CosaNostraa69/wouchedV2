@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { toast } from "@/hooks/use-toast"
 
 export default function SignInForm() {
   const [email, setEmail] = useState('')
@@ -22,11 +23,27 @@ export default function SignInForm() {
         password,
       })
       if (result?.error) {
-        throw new Error(result.error)
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        })
+      } else {
+        // Redirect to home page on successful sign in
+        router.push('/')
+        // Optionally, show a success toast
+        toast({
+          title: "Success",
+          description: "You have successfully signed in.",
+        })
       }
-      router.push('/dashboard')
     } catch (error) {
       console.error('Sign in error:', error)
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 

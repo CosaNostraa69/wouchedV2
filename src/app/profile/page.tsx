@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toast } from "@/hooks/use-toast"
 
 interface ProfileData {
   name: string;
   email: string;
+  avatarUrl: string;
   company: {
     name: string;
     description: string;
@@ -22,10 +24,11 @@ interface ProfileData {
 }
 
 export default function EmployerProfilePage() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const [profileData, setProfileData] = useState<ProfileData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -48,6 +51,11 @@ export default function EmployerProfilePage() {
       }
     } catch (error) {
       console.error('Error fetching profile data:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load profile data",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -64,13 +72,55 @@ export default function EmployerProfilePage() {
         body: JSON.stringify(profileData),
       })
       if (response.ok) {
-        // Show success message
-        console.log('Profile updated successfully')
+        toast({
+          title: "Success",
+          description: "Profile updated successfully",
+        })
+        // Update the session to reflect changes
+        await update()
       } else {
         throw new Error('Failed to update profile')
       }
     } catch (error) {
       console.error('Error updating profile:', error)
+      toast({
+        title: "Error",
+        description: "Failed to update profile",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const formData = new FormData()
+      formData.append('avatar', file)
+
+      try {
+        const response = await fetch('/api/upload-avatar', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (response.ok) {
+          const { avatarUrl } = await response.json()
+          setProfileData(prev => prev ? { ...prev, avatarUrl } : null)
+          toast({
+            title: "Success",
+            description: "Avatar updated successfully",
+          })
+        } else {
+          throw new Error('Failed to upload avatar')
+        }
+      } catch (error) {
+        console.error('Error uploading avatar:', error)
+        toast({
+          title: "Error",
+          description: "Failed to upload avatar",
+          variant: "destructive",
+        })
+      }
     }
   }
 
@@ -99,10 +149,19 @@ export default function EmployerProfilePage() {
               <TabsContent value="personal" className="space-y-4">
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-20 w-20">
-                    <AvatarImage src={session?.user?.image || undefined} />
+                    <AvatarImage src={profileData.avatarUrl} />
                     <AvatarFallback>{profileData.name.charAt(0)}</AvatarFallback>
                   </Avatar>
-                  <Button>Change Avatar</Button>
+                  <Button onClick={() => fileInputRef.current?.click()}>
+                    Change Avatar
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarChange}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
