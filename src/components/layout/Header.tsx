@@ -13,10 +13,14 @@ const Header = () => {
           Esport Job Board
         </Link>
         <nav>
+          <Link href="/jobs" className="mr-4 hover:text-gray-300">Jobs</Link>
           {status === 'loading' ? (
             <span>Loading...</span>
           ) : session ? (
             <div>
+              {session.user.role === 'EMPLOYER' && (
+                <Link href="/employer/dashboard" className="mr-4 hover:text-gray-300">Dashboard</Link>
+              )}
               <span className="mr-4">Welcome, {session.user.name}</span>
               <button
                 onClick={() => signOut()}
