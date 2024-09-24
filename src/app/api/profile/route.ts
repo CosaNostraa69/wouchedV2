@@ -80,8 +80,13 @@ export async function PUT(req: Request) {
     console.log('Updated user:', updatedUser)
 
     return NextResponse.json({ message: 'Profile updated successfully', user: updatedUser })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error updating profile:', error)
-    return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
+    
+    if (error instanceof Error) {
+      return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
+    } else {
+      return NextResponse.json({ error: 'Internal server error', details: 'An unknown error occurred' }, { status: 500 })
+    }
   }
 }
