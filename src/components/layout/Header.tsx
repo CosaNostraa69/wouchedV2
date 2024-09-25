@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useEffect, useState } from 'react'
+import { ModeToggle } from '@/components/ui/mode-toggle'  
 
 const Header = () => {
   const { data: session, status } = useSession()
@@ -54,6 +55,7 @@ const Header = () => {
         </Link>
         <nav className="flex items-center space-x-4">
           <Link href="/jobs" className="hover:text-gray-300 transition-colors">Jobs</Link>
+          <ModeToggle />
           {status === 'loading' ? (
             <span>Loading...</span>
           ) : session ? (

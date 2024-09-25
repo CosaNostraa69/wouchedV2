@@ -3,12 +3,14 @@ import localFont from "next/font/local";
 import "./globals.css";
 import AuthProvider from '@/components/AuthProvider'
 import Header from '@/components/layout/Header'
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -26,13 +28,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <AuthProvider>
-          <Header />
-          <main className="container mx-auto mt-8 px-4">
-            {children}
-          </main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            <main>
+              {children}
+            </main>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

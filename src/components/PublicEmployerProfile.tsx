@@ -108,7 +108,7 @@ export function PublicEmployerProfile({ employerId }: PublicEmployerProfileProps
                     <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <CardTitle className="text-2xl">{profile.name}</CardTitle>
+                    <CardTitle className="text-2xl">{profile.company.name}</CardTitle>
                     <div className="flex items-center space-x-2">
                         <StarRating rating={profile.rating} />
                         <span>{profile.rating.toFixed(1)}</span>
@@ -176,7 +176,7 @@ export function PublicEmployerProfile({ employerId }: PublicEmployerProfileProps
                         )}
                     </TabsContent>
                     <TabsContent value="jobs">
-                        <EmployerJobList jobs={jobs} isPublicView={true} />
+                        <EmployerJobList initialJobs={jobs} isPublicView={true} />
                     </TabsContent>
                 </Tabs>
             </CardContent>
