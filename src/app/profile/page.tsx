@@ -16,14 +16,19 @@ export default function ProfilePage() {
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/auth/signin')
-    } else if (status === 'authenticated') {
+    } else if (status === 'authenticated' && session?.user?.id) {
       fetchProfileData()
     }
   }, [status, session, router])
 
   const fetchProfileData = async () => {
+    if (!session?.user?.id) {
+      console.error('User ID is missing')
+      return
+    }
+
     try {
-      const response = await fetch('/api/profile')
+      const response = await fetch(`/api/profile?userId=${session.user.id}`)
       if (response.ok) {
         const data = await response.json()
         setProfileData(data)
@@ -55,7 +60,7 @@ export default function ProfilePage() {
       {session?.user.role === 'EMPLOYER' ? (
         <EmployerProfileForm initialData={profileData} userId={session.user.id} />
       ) : (
-        <UserProfileForm initialData={profileData} />
+        <UserProfileForm initialData={{ profile: profileData, id: session?.user.id || '', name: '', email: '', avatarUrl: '' }} />
       )}
     </div>
   )

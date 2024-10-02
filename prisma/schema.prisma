@@ -15,7 +15,7 @@ model User {
   name         String?
   email        String        @unique
   password     String
-  role         String        @default("USER")
+  role         Role          @default(USER)  
   company      Company?      @relation(fields: [companyId], references: [id])
   companyId    String?
   image        String?
@@ -24,9 +24,9 @@ model User {
   profile      Profile?
   jobs         Job[]
   applications Application[]
-  reviews Review[]
-  
+  reviews      Review[]
 }
+
 
 model Profile {
   id            String    @id @default(cuid())

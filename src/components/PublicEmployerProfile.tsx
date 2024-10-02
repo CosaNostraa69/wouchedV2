@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { EmployerJobList } from '@/components/EmployerJobList'
 import { StarRating } from '@/components/StarRating'
 
+
 interface EmployerProfile {
     id: string;
     name: string;
