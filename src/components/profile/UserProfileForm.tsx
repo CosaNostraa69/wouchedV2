@@ -34,7 +34,7 @@ interface UserProfileFormProps {
 }
 
 export function UserProfileForm({ initialData }: UserProfileFormProps) {
-    const [userId, setUserId] = useState<string | null>(initialData.id || null)
+    const [userId] = useState<string | null>(initialData.id || null)
     const { data: session, update } = useSession()
     const [profileData, setProfileData] = useState<ProfileData>({
         ...initialData,
@@ -97,6 +97,7 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
             setIsSubmitting(false)
         }
     }
+
     useEffect(() => {
         if (!userId) {
             console.error('User ID is missing in initialData')
@@ -107,7 +108,6 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
             })
         }
     }, [userId])
-
 
     const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -173,6 +173,7 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
                             id="name"
                             value={profileData.name}
                             onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                            required
                         />
                     </div>
                     <div className="space-y-2">
@@ -182,6 +183,7 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
                             type="email"
                             value={profileData.email}
                             onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                            required
                         />
                     </div>
                     <div className="space-y-2">
@@ -255,13 +257,13 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
                             {isSubmitting ? 'Saving...' : 'Save Changes'}
                         </Button>
                         {userId ? (
-                    <Link href={`/users/${userId}`}>
-                        <Button variant="outline">View Public Profile</Button>
-                    </Link>
-                ) : (
-                    <Button variant="outline" disabled>View Public Profile</Button>
-                )}
-            </CardFooter>
+                            <Link href={`/users/${userId}`}>
+                                <Button variant="outline">View Public Profile</Button>
+                            </Link>
+                        ) : (
+                            <Button variant="outline" disabled>View Public Profile</Button>
+                        )}
+                    </CardFooter>
                 </form>
             </CardContent>
         </Card>

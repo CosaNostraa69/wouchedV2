@@ -8,9 +8,19 @@ type UserWithCompany = User & { company: Company | null }
 export async function POST(req: Request) {
   try {
     const { name, email, password, role, companyName } = await req.json()
+
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    })
+
+    if (existingUser) {
+      return NextResponse.json({ error: 'User with this email already exists.' }, { status: 400 })
+    }
+
     const hashedPassword = await hash(password, 10)
 
-    let user: User | UserWithCompany;
+    let user: User | UserWithCompany
 
     if (role === 'EMPLOYER') {
       user = await prisma.user.create({
@@ -50,6 +60,6 @@ export async function POST(req: Request) {
     })
   } catch (error: any) {
     console.error('Registration error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to create user.' }, { status: 500 })
   }
 }

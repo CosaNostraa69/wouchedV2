@@ -17,23 +17,26 @@ export default function RegisterForm() {
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role, companyName }),
-      })
+      });
+  
+      console.log('Registration response:', await res.json()); // Log pour déboguer
+  
       if (res.ok) {
-        router.push('/auth/signin')
+        router.push('/auth/signin');
       } else {
-        throw new Error('Registration failed')
+        throw new Error('Registration failed');
       }
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('Registration error:', error);
     }
-  }
-
+  };
+  
   return (
     <Card>
       <CardHeader>

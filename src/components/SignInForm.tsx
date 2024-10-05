@@ -15,37 +15,40 @@ export default function SignInForm() {
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
-      })
+      });
+  
+      console.log('SignIn result:', result); // Ajout de logs pour vérifier les réponses
+  
       if (result?.error) {
         toast({
           title: "Error",
           description: result.error,
           variant: "destructive",
-        })
+        });
       } else {
-        // Redirect to home page on successful sign in
-        router.push('/')
-        // Optionally, show a success toast
+        // Redirection en cas de succès
+        router.push('/');
         toast({
           title: "Success",
           description: "You have successfully signed in.",
-        })
+        });
       }
     } catch (error) {
-      console.error('Sign in error:', error)
+      console.error('Sign in error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
+  
 
   return (
     <Card>
