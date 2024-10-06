@@ -5,7 +5,6 @@ import { Search, MapPin } from 'lucide-react';
 const HeroSection = () => {
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Background image */}
       <Image
         src="/images/download (1).svg"
         alt="Background"
@@ -16,9 +15,7 @@ const HeroSection = () => {
       />
       
       <div className="container mx-auto px-4 py-12 relative z-10">
-        {/* Flex container for left and right divs with equal width and height */}
         <div className="flex flex-col lg:flex-row items-center space-y-8 lg:space-y-0 lg:space-x-8 mx-auto w-[1320px] h-[393px] mt-8"> {/* Added margin-top here */}
-          {/* Left column: Text with padding and equal width */}
           <div className="w-full lg:w-1/2 h-full px-6 flex flex-col justify-center">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
               Where companies and freelancers find the perfect fit
@@ -28,7 +25,6 @@ const HeroSection = () => {
             </p>
           </div>
           
-          {/* Right column: Image with border radius and equal width */}
           <div className="w-full lg:w-1/2 h-full px-6 flex justify-center items-center">
             <Image
               src="/images/S.png"
@@ -42,7 +38,6 @@ const HeroSection = () => {
           </div>
         </div>
         
-        {/* Search bar: Full width with four elements included */}
         <div className="bg-white rounded-lg shadow-lg p-6 mt-8 max-w-full mx-auto w-[1320px]">
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 items-center">
             <div className="flex-1 relative">
