@@ -1,9 +1,9 @@
 'use client'
-
-import Link from 'next/link'
-import Image from 'next/image'
-import { useSession, signOut } from 'next-auth/react'
-import { Button } from "@/components/ui/button"
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,61 +11,86 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useEffect, useState } from 'react'
-import { ModeToggle } from '@/components/ui/mode-toggle'  
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState } from 'react';
+import { ModeToggle } from '@/components/ui/mode-toggle';
+import { ChevronDown } from 'lucide-react';
 
 const Header = () => {
-  const { data: session, status } = useSession()
-  const [profileData, setProfileData] = useState<{ name: string; avatarUrl: string } | null>(null)
+  const { data: session, status } = useSession();
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     const fetchProfileData = async () => {
       if (session?.user) {
         try {
-          const response = await fetch('/api/profile')
+          const response = await fetch('/api/profile');
           if (response.ok) {
-            const data = await response.json()
+            const data = await response.json();
             setProfileData({
               name: session.user.role === 'EMPLOYER' ? data.company.name : data.name,
               avatarUrl: data.avatarUrl
-            })
+            });
           }
         } catch (error) {
-          console.error('Error fetching profile data:', error)
+          console.error('Error fetching profile data:', error);
         }
       }
-    }
+    };
 
     if (session) {
-      fetchProfileData()
+      fetchProfileData();
     }
-  }, [session])
+  }, [session]);
 
-  const displayName = profileData?.name || session?.user?.name || ''
-  const avatarUrl = profileData?.avatarUrl || session?.user?.image || undefined
+  const displayName = profileData?.name || session?.user?.name || '';
+  const avatarUrl = profileData?.avatarUrl || session?.user?.image || undefined;
 
   return (
-    <header className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 shadow-lg">
+    <header className="bg-white shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="flex items-center space-x-2">
-          <Image src="/images/wouched.png" alt="Wouched Logo" width={40} height={40} className="rounded-full" />
-          <span className="text-xl font-bold">Wouched</span>
-        </Link>
-        <nav className="flex items-center space-x-4">
-          <Link href="/jobs" className="hover:text-gray-300 transition-colors">Jobs</Link>
+        <div className="flex items-center space-x-8">
+          <Link href="/" className="flex items-center space-x-2">
+            <Image src="/images/wouched.png" alt="Wouched Logo" width={40} height={40} />
+            <span className="text-xl font-bold text-gray-800">Wouched</span>
+          </Link>
+          <nav className="hidden md:flex space-x-6">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center text-gray-600 hover:text-gray-800">
+                Companies <ChevronDown className="ml-1 h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Option 1</DropdownMenuItem>
+                <DropdownMenuItem>Option 2</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center text-gray-600 hover:text-gray-800">
+                Freelancers <ChevronDown className="ml-1 h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Option 1</DropdownMenuItem>
+                <DropdownMenuItem>Option 2</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link href="/jobs" className="text-gray-600 hover:text-gray-800">Jobs</Link>
+          </nav>
+        </div>
+        <div className="flex items-center space-x-4">
           <ModeToggle />
           {status === 'loading' ? (
             <span>Loading...</span>
           ) : session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="flex items-center space-x-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={avatarUrl} alt={displayName} />
                     <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
+                  <span className="text-sm font-medium text-gray-700">{displayName}</span>
+                  <ChevronDown className="h-4 w-4 text-gray-500" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -98,15 +123,19 @@ const Header = () => {
               <Button variant="ghost" asChild>
                 <Link href="/auth/signin">Sign In</Link>
               </Button>
-              <Button asChild>
-                <Link href="/auth/register">Register</Link>
+              <Button className="bg-red-500 hover:bg-red-600 text-white" asChild>
+                <Link href="/auth/register">Create my account</Link>
               </Button>
             </div>
           )}
-        </nav>
+          <select className="bg-transparent text-sm">
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+          </select>
+        </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
