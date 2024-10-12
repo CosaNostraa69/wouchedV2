@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from '@/components/AuthProvider'
 import Header from '@/components/layout/Header'
 import { ThemeProvider } from "@/components/theme-provider"
+import Footer from "@/components/layout/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +42,7 @@ export default function RootLayout({
             <main>
               {children}
             </main>
+            <Footer />
           </ThemeProvider>
         </AuthProvider>
       </body>

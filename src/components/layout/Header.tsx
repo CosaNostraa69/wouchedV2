@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
@@ -13,7 +13,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from 'react';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { ChevronDown } from 'lucide-react';
 
@@ -48,7 +47,7 @@ const Header = () => {
   const avatarUrl = profileData?.avatarUrl || session?.user?.image || undefined;
 
   return (
-    <header className="bg-white shadow-sm p-4">
+    <header className="sticky top-0 z-50 bg-white shadow-sm p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center space-x-2">
