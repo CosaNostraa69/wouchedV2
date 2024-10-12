@@ -99,114 +99,145 @@ export function EmployerProfileForm({ initialData, userId }: EmployerProfileForm
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Employer Profile</CardTitle>
-        <CardDescription>Manage your personal and company information</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="personal">
-          <TabsList>
-            <TabsTrigger value="personal">Personal Information</TabsTrigger>
-            <TabsTrigger value="company">Company Information</TabsTrigger>
-          </TabsList>
-          <form onSubmit={handleSubmit}>
-            <TabsContent value="personal" className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={profileData.avatarUrl} />
-                  <AvatarFallback>{profileData.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <Button type="button" onClick={() => fileInputRef.current?.click()}>
-                  Change Avatar
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="max-w-4xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+        <CardHeader className="bg-gray-800 text-white p-6">
+          <CardTitle className="text-2xl font-semibold">Employer Profile</CardTitle>
+          <CardDescription className="text-gray-300 mt-1">Manage your personal and company information</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <Tabs defaultValue="personal" className="space-y-6">
+            <TabsList className="bg-gray-100 p-1 rounded-md">
+              <TabsTrigger value="personal" className="px-4 py-2 text-sm font-medium">Personal Information</TabsTrigger>
+              <TabsTrigger value="company" className="px-4 py-2 text-sm font-medium">Company Information</TabsTrigger>
+            </TabsList>
+            <form onSubmit={handleSubmit}>
+              <TabsContent value="personal" className="space-y-6">
+                <div className="flex items-center space-x-6">
+                  <Avatar className="h-24 w-24 rounded-full border-4 border-gray-200">
+                    <AvatarImage src={profileData.avatarUrl} />
+                    <AvatarFallback className="text-2xl font-bold bg-gray-300 text-gray-600">{profileData.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <Button 
+                    type="button" 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out"
+                  >
+                    Change Avatar
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleAvatarChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
+                    <Input
+                      id="name"
+                      value={profileData.name}
+                      onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="company" className="space-y-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="companyName" className="text-sm font-medium text-gray-700">Company Name</Label>
+                    <Input
+                      id="companyName"
+                      value={profileData.company.name}
+                      onChange={(e) => setProfileData({...profileData, company: {...profileData.company, name: e.target.value}})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyWebsite" className="text-sm font-medium text-gray-700">Company Website</Label>
+                    <Input
+                      id="companyWebsite"
+                      type="url"
+                      value={profileData.company.website}
+                      onChange={(e) => setProfileData({...profileData, company: {...profileData.company, website: e.target.value}})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyDescription" className="text-sm font-medium text-gray-700">Company Description</Label>
+                  <Textarea
+                    id="companyDescription"
+                    value={profileData.company.description}
+                    onChange={(e) => setProfileData({...profileData, company: {...profileData.company, description: e.target.value}})}
+                    className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    rows={4}
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="foundedYear" className="text-sm font-medium text-gray-700">Founded Year</Label>
+                    <Input
+                      id="foundedYear"
+                      type="number"
+                      value={profileData.company.foundedYear}
+                      onChange={(e) => setProfileData({...profileData, company: {...profileData.company, foundedYear: parseInt(e.target.value)}})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companySize" className="text-sm font-medium text-gray-700">Company Size</Label>
+                    <Input
+                      id="companySize"
+                      value={profileData.company.size}
+                      onChange={(e) => setProfileData({...profileData, company: {...profileData.company, size: e.target.value}})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyLocation" className="text-sm font-medium text-gray-700">Company Location</Label>
+                    <Input
+                      id="companyLocation"
+                      value={profileData.company.location}
+                      onChange={(e) => setProfileData({...profileData, company: {...profileData.company, location: e.target.value}})}
+                      className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+              <CardFooter className="mt-8 flex justify-between items-center border-t pt-6">
+                <Button 
+                  type="submit"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md transition duration-300 ease-in-out"
+                >
+                  Save Changes
                 </Button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleAvatarChange}
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  value={profileData.name}
-                  onChange={(e) => setProfileData({...profileData, name: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={profileData.email}
-                  onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="company" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
-                <Input
-                  id="companyName"
-                  value={profileData.company.name}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, name: e.target.value}})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="companyDescription">Company Description</Label>
-                <Textarea
-                  id="companyDescription"
-                  value={profileData.company.description}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, description: e.target.value}})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="companyWebsite">Company Website</Label>
-                <Input
-                  id="companyWebsite"
-                  type="url"
-                  value={profileData.company.website}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, website: e.target.value}})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="foundedYear">Founded Year</Label>
-                <Input
-                  id="foundedYear"
-                  type="number"
-                  value={profileData.company.foundedYear}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, foundedYear: parseInt(e.target.value)}})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="companySize">Company Size</Label>
-                <Input
-                  id="companySize"
-                  value={profileData.company.size}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, size: e.target.value}})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="companyLocation">Company Location</Label>
-                <Input
-                  id="companyLocation"
-                  value={profileData.company.location}
-                  onChange={(e) => setProfileData({...profileData, company: {...profileData.company, location: e.target.value}})}
-                />
-              </div>
-            </TabsContent>
-            <CardFooter className="mt-4 flex justify-between">
-              <Button type="submit">Save Changes</Button>
-              <Link href={`/users/${userId}`} passHref>
-                <Button variant="outline">View Public Profile</Button>
-              </Link>
-            </CardFooter>
-          </form>
-        </Tabs>
-      </CardContent>
-    </Card>
-  )
+                <Link href={`/users/${userId}`} passHref>
+                  <Button 
+                    variant="outline"
+                    className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-md transition duration-300 ease-in-out"
+                  >
+                    View Public Profile
+                  </Button>
+                </Link>
+              </CardFooter>
+            </form>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

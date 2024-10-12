@@ -144,128 +144,156 @@ export function UserProfileForm({ initialData }: UserProfileFormProps) {
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle>User Profile</CardTitle>
-                <CardDescription>Manage your personal information and gaming profiles</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                        <Avatar className="h-20 w-20">
-                            <AvatarImage src={profileData.avatarUrl} />
-                            <AvatarFallback>{profileData.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <Button type="button" onClick={() => fileInputRef.current?.click()}>
-                            Change Avatar
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <Card className="w-full max-w-4xl bg-white rounded-lg shadow-lg">
+                <CardHeader className="p-6 border-b border-gray-200">
+                    <CardTitle className="text-2xl font-semibold text-gray-800">User Profile</CardTitle>
+                    <CardDescription className="text-sm text-gray-600">Manage your personal information and gaming profiles</CardDescription>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="flex items-center space-x-4">
+                            <Avatar className="h-24 w-24 rounded-full border-2 border-gray-300">
+                                <AvatarImage src={profileData.avatarUrl} />
+                                <AvatarFallback className="text-2xl font-semibold text-gray-600 bg-gray-200">
+                                    {profileData.name.charAt(0)}
+                                </AvatarFallback>
+                            </Avatar>
+                            <Button
+                                type="button"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                Change Avatar
+                            </Button>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleAvatarChange}
+                                accept="image/*"
+                                className="hidden"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="name" className="text-sm font-medium text-gray-700">Name</Label>
+                                <Input
+                                    id="name"
+                                    value={profileData.name}
+                                    onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
+                                    required
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    value={profileData.email}
+                                    onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                                    required
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="bio" className="text-sm font-medium text-gray-700">Bio</Label>
+                            <Textarea
+                                id="bio"
+                                value={profileData.profile.bio}
+                                onChange={(e) => setProfileData({
+                                    ...profileData,
+                                    profile: { ...profileData.profile, bio: e.target.value }
+                                })}
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="experience" className="text-sm font-medium text-gray-700">Experience</Label>
+                            <Textarea
+                                id="experience"
+                                value={profileData.profile.experience}
+                                onChange={(e) => setProfileData({
+                                    ...profileData,
+                                    profile: { ...profileData.profile, experience: e.target.value }
+                                })}
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="skills" className="text-sm font-medium text-gray-700">Skills</Label>
+                            <Input
+                                id="skills"
+                                value={profileData.profile.skills.join(', ')}
+                                onChange={(e) => setProfileData({
+                                    ...profileData,
+                                    profile: { ...profileData.profile, skills: e.target.value.split(',').map(s => s.trim()) }
+                                })}
+                                className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="steamProfile" className="text-sm font-medium text-gray-700">Steam Profile</Label>
+                                <Input
+                                    id="steamProfile"
+                                    value={profileData.profile.steamProfile}
+                                    onChange={(e) => setProfileData({
+                                        ...profileData,
+                                        profile: { ...profileData.profile, steamProfile: e.target.value }
+                                    })}
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="twitchProfile" className="text-sm font-medium text-gray-700">Twitch Profile</Label>
+                                <Input
+                                    id="twitchProfile"
+                                    value={profileData.profile.twitchProfile}
+                                    onChange={(e) => setProfileData({
+                                        ...profileData,
+                                        profile: { ...profileData.profile, twitchProfile: e.target.value }
+                                    })}
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="discordProfile" className="text-sm font-medium text-gray-700">Discord Profile</Label>
+                                <Input
+                                    id="discordProfile"
+                                    value={profileData.profile.discordProfile}
+                                    onChange={(e) => setProfileData({
+                                        ...profileData,
+                                        profile: { ...profileData.profile, discordProfile: e.target.value }
+                                    })}
+                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                />
+                            </div>
+                        </div>
+                    </form>
+                </CardContent>
+                <CardFooter className="flex justify-between p-6 border-t border-gray-200">
+                    <Button
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                    {userId ? (
+                        <Link href={`/users/${userId}`}>
+                            <Button variant="outline" className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-2 rounded">
+                                View Public Profile
+                            </Button>
+                        </Link>
+                    ) : (
+                        <Button variant="outline" disabled className="border border-gray-400 text-gray-400 px-6 py-2 rounded">
+                            View Public Profile
                         </Button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleAvatarChange}
-                            accept="image/*"
-                            style={{ display: 'none' }}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
-                        <Input
-                            id="name"
-                            value={profileData.name}
-                            onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            value={profileData.email}
-                            onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                            required
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
-                        <Textarea
-                            id="bio"
-                            value={profileData.profile.bio}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, bio: e.target.value }
-                            })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="experience">Experience</Label>
-                        <Textarea
-                            id="experience"
-                            value={profileData.profile.experience}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, experience: e.target.value }
-                            })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="skills">Skills</Label>
-                        <Input
-                            id="skills"
-                            value={profileData.profile.skills.join(', ')}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, skills: e.target.value.split(',').map(s => s.trim()) }
-                            })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="steamProfile">Steam Profile</Label>
-                        <Input
-                            id="steamProfile"
-                            value={profileData.profile.steamProfile}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, steamProfile: e.target.value }
-                            })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="twitchProfile">Twitch Profile</Label>
-                        <Input
-                            id="twitchProfile"
-                            value={profileData.profile.twitchProfile}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, twitchProfile: e.target.value }
-                            })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="discordProfile">Discord Profile</Label>
-                        <Input
-                            id="discordProfile"
-                            value={profileData.profile.discordProfile}
-                            onChange={(e) => setProfileData({
-                                ...profileData,
-                                profile: { ...profileData.profile, discordProfile: e.target.value }
-                            })}
-                        />
-                    </div>
-                    <CardFooter className="px-0 flex justify-between">
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Saving...' : 'Save Changes'}
-                        </Button>
-                        {userId ? (
-                            <Link href={`/users/${userId}`}>
-                                <Button variant="outline">View Public Profile</Button>
-                            </Link>
-                        ) : (
-                            <Button variant="outline" disabled>View Public Profile</Button>
-                        )}
-                    </CardFooter>
-                </form>
-            </CardContent>
-        </Card>
-    )
+                    )}
+                </CardFooter>
+            </Card>
+        </div>
+    );
 }
